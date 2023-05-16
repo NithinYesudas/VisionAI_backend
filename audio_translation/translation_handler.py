@@ -1,36 +1,18 @@
-import re
-from fastapi import File, UploadFile, APIRouter
-from fastapi.responses import FileResponse
-import io
-import os
-from google.oauth2 import service_account
-from google.cloud import speech, texttospeech
 import googletrans
 from googletrans import Translator
 import tempfile
+from google.oauth2 import service_account
+from google.cloud import speech, texttospeech
+import os
+from dotenv import load_dotenv
 
-router = APIRouter()
+load_dotenv()
 
 client_file = os.getenv("GOOLGE_SERVICE_ACCOUNT")
 credentials = service_account.Credentials.from_service_account_file(
     client_file)
 client_speech = speech.SpeechClient(credentials=credentials)
 client_text = texttospeech.TextToSpeechClient(credentials=credentials)
-
-
-@router.post("/audio/")
-async def audio(file: UploadFile = File(...)):
-    audio_file = await file.read()
-
-    transcript = await get_transcript(audio_file)
-    translate = await get_translate(transcript)
-    audio_response = await get_translated_audio(translate)
-
-    
-    
-
-    return  FileResponse(audio_response,media_type="audio/mp3", filename="translated_output.mp3")
-    
 
 
 async def get_transcript(audio_file):
@@ -48,8 +30,6 @@ async def get_transcript(audio_file):
         return response.results[0].alternatives[0].transcript
     else:
         return ""
-
-
 
 
 async def get_translate(text):

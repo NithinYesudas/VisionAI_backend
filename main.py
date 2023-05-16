@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from auth import router as auth_router
-from audio_handler import router as audio_router
-from content_generators import router as content_generator_router
+from authentication.auth import router as auth_router
+from audio_translation.audio_translator import router as audio_router
+from content_generator.content_generators import router as content_generator_router
 
 
 app = FastAPI()
