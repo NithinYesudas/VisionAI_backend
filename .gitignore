@@ -1,3 +1,4 @@
 /.env
 /vision_ai_google_cloud.json
 /venv
+/__pycache__

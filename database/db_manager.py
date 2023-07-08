@@ -14,4 +14,7 @@ def get_one_data(key:dict,collection:str):
 def insert_one_data(data:dict,collection:str):
     collection = db[collection]
     result = collection.insert_one(data)
+    
+    
+    
 

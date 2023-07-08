@@ -25,3 +25,6 @@ async def audio(file: UploadFile = File(...)):
     
 
 
+@router.get("/languages/")
+async def languages():    
+    return await translation_handler.get_supported_languages()

@@ -5,7 +5,7 @@ from datetime import timedelta,datetime
 from fastapi import HTTPException,status,Depends
 import os
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer,HTTPBearer,HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from database.db_manager import get_one_data
 
@@ -17,6 +17,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/")
 secret_key = os.getenv("SECRET_KEY")
 algorithm = os.getenv("ALGORITHM")
+security_scheme = HTTPBearer()
 
 
 def get_user(username:str):
@@ -76,3 +77,18 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
 
     return User(**user)
+
+
+def verify_token(auth:HTTPAuthorizationCredentials = Depends(security_scheme)):
+    try:
+        payload = jwt.decode(auth.credentials, secret_key, algorithms=[algorithm])
+        if datetime.fromisoformat(payload.get("expires")) < datetime.now():
+
+            raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Token expired")
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

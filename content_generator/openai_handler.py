@@ -12,3 +12,5 @@ def openai_prompt_runner(prompt: str, max_tokens: int = 100):
         temperature=0,
     )
     return result["choices"][0]["text"]
+
+

@@ -1,5 +1,5 @@
 import googletrans
-from googletrans import Translator
+from googletrans import Translator,LANGUAGES
 import tempfile
 from google.oauth2 import service_account
 from google.cloud import speech, texttospeech
@@ -32,16 +32,17 @@ async def get_transcript(audio_file):
         return ""
 
 
-async def get_translate(text):
+async def get_translate(text,dest):
     translator = Translator()
 
     try:
-        result = translator.translate(text, dest='ml')
-        translated_text = result.text  # Access the translated text
+        
+        result = translator.translate(text, dest=dest)
+        translated_text = result.text  # Access the translated text 
         return translated_text
     except Exception as e:
         # Handle translation errors
-        print(f"Translation error: {str(e)}")
+        raise e
         return ""
 
 
@@ -64,3 +65,6 @@ async def get_translated_audio(text):
         temp_file_path = temp_file.name
 
     return temp_file_path
+
+async def get_supported_languages():
+    return LANGUAGES

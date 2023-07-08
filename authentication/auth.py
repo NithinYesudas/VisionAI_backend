@@ -75,3 +75,7 @@ async def refresh_token(token: str):
 @router.get("/user/me/", response_model=User)
 async def get_user_me(current_user: User = Depends(auth_helper.get_current_user)):
     return current_user
+
+@router.get("/hello/{message}")
+async def hello(message: str):
+    return {"hello": message} 
