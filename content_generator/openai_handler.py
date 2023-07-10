@@ -4,7 +4,7 @@ openai.organization = "org-WCLXqOY552W4pCFBjqvvngoL"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def openai_prompt_runner(prompt: str, max_tokens: int = 100):
+def openai_prompt_runner(prompt: str, max_tokens: int = 500):
     result = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,

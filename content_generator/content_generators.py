@@ -14,7 +14,7 @@ async def description_generator(title: str):
     result = openai_prompt_runner(f"Generate a relevant description for the following video title {title}, please avoid any kind of explanations other that the description of the video")
     return {"description": result}
 
-@router.get("/content/script/{title}/{time}")
+@router.get("/content/script_generator/{title}/{time}")
 async def script_generator(title:str,time:str):
     result = openai_prompt_runner(f"Create a well defined script for a YouTube video of {time} minutes on the title {title} Please avoid any type of explanation other than the script itself",)
     return {"script": result}

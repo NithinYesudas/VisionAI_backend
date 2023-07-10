@@ -18,13 +18,14 @@ client_text = texttospeech.TextToSpeechClient(credentials=credentials)
 async def get_transcript(audio_file):
     audio = speech.RecognitionAudio(content=audio_file)
     config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-        sample_rate_hertz=16000,
+       
+        sample_rate_hertz=44100,
         language_code='en-US',
     )
 
     response = client_speech.recognize(config=config, audio=audio)
-    print(response)
+    
+    
 
     if response.results:
         return response.results[0].alternatives[0].transcript
