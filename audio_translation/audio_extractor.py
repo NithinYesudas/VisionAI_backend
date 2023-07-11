@@ -1,8 +1,9 @@
 from fastapi import  UploadFile
 import os
 import librosa
+import tempfile
 
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, AudioFileClip
 
 UPLOADS_DIR = "uploads"
 async def extract_audio_from_video(video_file: UploadFile):
@@ -11,7 +12,7 @@ async def extract_audio_from_video(video_file: UploadFile):
         os.makedirs(UPLOADS_DIR)
 
     # Save the uploaded video file to disk
-    file_path = os.path.join(UPLOADS_DIR, video_file.filename)
+    file_path = os.path.join(UPLOADS_DIR, "video.mp4")
     with open(file_path, "wb") as f:
         f.write(await video_file.read())
 
@@ -24,7 +25,7 @@ async def extract_audio_from_video(video_file: UploadFile):
 
         # Define the output file path for the extracted audio
         audio_file_path = os.path.join(
-            UPLOADS_DIR, f"{video_file.filename.split('.')[0]}.mp3")
+            UPLOADS_DIR, "audio.mp3")
 
         # Save the extracted audio to disk
         audio.write_audiofile(audio_file_path)
@@ -32,6 +33,8 @@ async def extract_audio_from_video(video_file: UploadFile):
         # Read the content of the audio file
         with open(audio_file_path, "rb") as f:
             audio_content = f.read()
+        del audio
+        os.remove(audio_file_path)
 
         # Return the audio content
         return audio_content
@@ -40,20 +43,24 @@ async def extract_audio_from_video(video_file: UploadFile):
         # Delete the uploaded video and audio files from disk
         video.close()
         del video
-        del audio
-        del file_path
+       
 
+async def replace_audio(audio_path:str):
+    # Load the video clip
+    video = VideoFileClip("uploads/video.mp4")
 
-def convert_to_mono(audio_content):
+    # Load the new audio clip
+    audio = AudioFileClip(audio_path)
 
+    # Set the audio of the video to the new audio clip
+    video =  video.set_audio(audio)
 
-    # Load stereo audio data
-    audio_data, sample_rate = librosa.load(audio_content, sr=None, mono=False)
-
-    # Convert to mono by averaging the channels
-    mono_audio_data = librosa.to_mono(audio_data)
-
-    # Encode mono audio data as WAV
-    mono_audio_content = librosa.util.buf_to_wav(mono_audio_data, sample_rate)
-
-    return mono_audio_content
+    # Write the modified video to a new file
+    video.write_videofile("uploads/result.mp4", codec="libx264", audio_codec="libmp3lame")
+    file_path = os.path.join(UPLOADS_DIR, "result.mp4")
+   
+    # Close the video and audio clips
+    video.close()
+    audio.close()
+    
+    return file_path

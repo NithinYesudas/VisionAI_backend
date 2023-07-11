@@ -50,8 +50,8 @@ async def get_translate(text,dest):
 async def get_translated_audio(text):
     input = texttospeech.SynthesisInput(text=text)
     voice = texttospeech.VoiceSelectionParams(
-        language_code='es',
-        name='ml-IN-Standard-B',
+        language_code='hi-IN',
+        name='hi-IN-Wavenet-C',
         ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
     )
     audio_config = texttospeech.AudioConfig(
